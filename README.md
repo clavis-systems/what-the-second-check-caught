@@ -45,7 +45,7 @@ python summarise.py
 
 | File | What it is |
 |---|---|
-| `register.csv` | one row per problem raised (444 rows) |
+| `register.csv` | one row per problem raised (444 rows): first the 290 rows with text, then the 154 withheld rows |
 | `reports.csv` | the 71 review reports: date, reviewer, rows, SHA-256, public copy if there is one |
 | `second_annotator.csv` | the 96 rows that a second annotator re-checked against the reports |
 | `summarise.py` | recomputes the figures in this README (Python 3, standard library only) |
