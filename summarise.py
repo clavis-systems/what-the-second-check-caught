@@ -57,6 +57,13 @@ def main():
     withheld = [r for r in rows if r["text_withheld"]]
     table("Rows whose text is withheld, by reason", withheld, "text_withheld")
     print(f"  serious rows among them: {sum(r in serious for r in withheld)}")
+    released = [r for r in rows if r["text_released"]]
+    if released:
+        same = sum(withheld_sha256(r["row_id"], r["what_was_checked_it"], r["problem_it"], r["evidence_quote"],
+                                   r["note_it"]) == r["withheld_sha256"] for r in released)
+        print(f"\nrows whose text was released after the first publication: {len(released)} "
+              f"(on {', '.join(sorted({r['text_released'] for r in released}))}); the released text matches the hash "
+              f"published while it was withheld in {same} of {len(released)}")
     public = [r for r in reports if r["public_copy"]]
     print(f"\nreports with a public copy: {len(public)} of {len(reports)}, "
           f"covering {sum(int(r['rows']) for r in public)} of {len(rows)} rows")

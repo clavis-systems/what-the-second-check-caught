@@ -45,7 +45,7 @@ python summarise.py
 
 | File | What it is |
 |---|---|
-| `register.csv` | one row per problem raised (444 rows): first the 290 rows with text, then the 154 withheld rows |
+| `register.csv` | one row per problem raised (444 rows): first the 381 rows with text, then the 63 withheld rows |
 | `reports.csv` | the 71 review reports: date, reviewer, rows, SHA-256, public copy if there is one |
 | `second_annotator.csv` | the 96 rows that a second annotator re-checked against the reports |
 | `summarise.py` | recomputes the figures in this README (Python 3, standard library only) |
@@ -56,7 +56,7 @@ python summarise.py
 |---|---|
 | `row_id` | row number in the original register |
 | `annotation_pass` | `1` or `2`: the register was built in two passes on the same day |
-| `project` | the project, by the name of its public repository; `not-yet-public-A` to `D` are explained below |
+| `project` | the project, by the name of its public repository; `arc-agi-3-attempt` (a private project whose rows were released) and `not-yet-public-B` to `D` are explained below |
 | `report_id` | the review report the row comes from (see `reports.csv`) |
 | `review_round` | 1 for the first review of a document, 2 for the review of the corrected version, and so on |
 | `date` | date of the review |
@@ -70,8 +70,8 @@ python summarise.py
 | `duplicate_of` | if the same problem was already raised in an earlier row, that row |
 | `counted` | `yes`, or why the row is not counted |
 | `note` | how the outcome was decided: usually where the fix appears, with a quote. `[DOUBT]` marks a row where the annotator was unsure; `[OUTSIDE LIST]` marks a report that was not in the list first given to the annotator |
-| `problem_it`, `note_it` | the original Italian text of the register, from which `problem` and `note` were translated |
-| `text_withheld`, `withheld_sha256` | see "Rows whose text is withheld" |
+| `problem_it`, `note_it`, `what_was_checked_it` | the original Italian text of the register, from which `problem`, `note` and `what_was_checked` were translated |
+| `text_withheld`, `text_released`, `withheld_sha256` | see "Rows whose text is withheld" |
 
 ## Definitions
 
@@ -90,20 +90,29 @@ python summarise.py
 
 ## Rows whose text is withheld
 
-For 154 rows the register keeps the counts and the labels, but not the text. 31 of the 70 serious problems are among
+For 63 rows the register keeps the counts and the labels, but not the text. 10 of the 70 serious problems are among
 them.
 
-- **146 rows, "not yet public":** the reviewed material is not public yet. `not-yet-public-A` is a competition entry that
-  is not submitted yet; `not-yet-public-B` is a competition writeup that is submitted but not visible until the
-  competition closes; `not-yet-public-C` is a study still running; `not-yet-public-D` is internal notes on ideas.
+- **55 rows, "not yet public":** the reviewed material is not public yet. `not-yet-public-B` is a competition writeup
+  that is submitted but not visible until the competition closes; `not-yet-public-C` is a study that is finished but
+  not public yet; `not-yet-public-D` is internal notes on ideas.
 - **8 rows, "private correspondence":** reviews of an email to other researchers, and of a draft post and a short text
   for applications.
 
 For these rows `withheld_sha256` is the SHA-256 of the original text, so any text released later can be checked
 against it. The recipe is in `summarise.py` (function `withheld_sha256`): the compact JSON, with sorted keys and
 without escaping non-ASCII characters, of `row_id`, `what_was_checked`, `problem`, `evidence_quote` and `note` in the
-original Italian. I plan to release the text of the 146 "not yet public" rows when each project becomes public. The 8
+original Italian. I plan to release the text of the 55 "not yet public" rows when each project becomes public. The 8
 rows of private correspondence stay withheld.
+
+### Text released later
+
+- **24 October 2026, 91 rows (project `arc-agi-3-attempt`, formerly `not-yet-public-A`):** I dropped that competition
+  entry, so its rows are now public, 21 serious problems among them. The project itself and its review reports stay
+  private.
+- Released rows keep the `withheld_sha256` that was published while they were withheld, and `text_released` gives the
+  date. The Italian columns `what_was_checked_it`, `problem_it`, `evidence_quote` and `note_it` are the hashed text, so
+  `python summarise.py` can check that what was released is what had been withheld.
 
 ## Checking the rows
 
@@ -142,9 +151,11 @@ kind.
 
 ## How this was made
 
-I directed this work and checked the results. An AI agent (Claude) read the reviews and built the register, AI agents
-translated it, another AI system (Codex) checked it, and Claude drafted this text. I decide what is published and I
-answer for it.
+I directed this work and checked the results. An AI agent (Claude) read the reviews and built the register, another
+AI system (Codex) checked it, and Claude drafted this text. AI agents translated the register. The translation was
+checked automatically for numbers, and compared with the Italian by Codex on samples; the 91 rows released on 24
+October were compared in full by a separate Claude agent, because Codex was not available. I decide what is published
+and I answer for it.
 
 ## Licence
 
