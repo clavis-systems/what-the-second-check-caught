@@ -45,7 +45,7 @@ python summarise.py
 
 | File | What it is |
 |---|---|
-| `register.csv` | one row per problem raised (444 rows): first the 381 rows with text, then the 63 withheld rows |
+| `register.csv` | one row per problem raised (444 rows): first the 412 rows with text, then the 32 withheld rows |
 | `reports.csv` | the 71 review reports: date, reviewer, rows, SHA-256, public copy if there is one |
 | `second_annotator.csv` | the 96 rows that a second annotator re-checked against the reports |
 | `summarise.py` | recomputes the figures in this README (Python 3, standard library only) |
@@ -56,7 +56,7 @@ python summarise.py
 |---|---|
 | `row_id` | row number in the original register |
 | `annotation_pass` | `1` or `2`: the register was built in two passes on the same day |
-| `project` | the project, by the name of its public repository; `arc-agi-3-attempt` (a private project whose rows were released) and `not-yet-public-B` to `D` are explained below |
+| `project` | the project, by the name of its public repository; `arc-agi-3-attempt` (a private project whose rows were released), `not-yet-public-B` and `not-yet-public-D` are explained below |
 | `report_id` | the review report the row comes from (see `reports.csv`) |
 | `review_round` | 1 for the first review of a document, 2 for the review of the corrected version, and so on |
 | `date` | date of the review |
@@ -90,19 +90,18 @@ python summarise.py
 
 ## Rows whose text is withheld
 
-For 63 rows the register keeps the counts and the labels, but not the text. 10 of the 70 serious problems are among
+For 32 rows the register keeps the counts and the labels, but not the text. 2 of the 70 serious problems are among
 them.
 
-- **55 rows, "not yet public":** the reviewed material is not public yet. `not-yet-public-B` is a competition writeup
-  that is submitted but not visible until the competition closes; `not-yet-public-C` is a study that is finished but
-  not public yet; `not-yet-public-D` is internal notes on ideas.
+- **24 rows, "not yet public":** the reviewed material is not public yet. `not-yet-public-B` is a competition writeup
+  that is submitted but not visible until the competition closes; `not-yet-public-D` is internal notes on ideas.
 - **8 rows, "private correspondence":** reviews of an email to other researchers, and of a draft post and a short text
   for applications.
 
 For these rows `withheld_sha256` is the SHA-256 of the original text, so any text released later can be checked
 against it. The recipe is in `summarise.py` (function `withheld_sha256`): the compact JSON, with sorted keys and
 without escaping non-ASCII characters, of `row_id`, `what_was_checked`, `problem`, `evidence_quote` and `note` in the
-original Italian. I plan to release the text of the 55 "not yet public" rows when each project becomes public. The 8
+original Italian. I plan to release the text of the 24 "not yet public" rows when each project becomes public. The 8
 rows of private correspondence stay withheld.
 
 ### Text released later
@@ -110,6 +109,9 @@ rows of private correspondence stay withheld.
 - **24 October 2026, 91 rows (project `arc-agi-3-attempt`, formerly `not-yet-public-A`):** I dropped that competition
   entry, so its rows are now public, 21 serious problems among them. The project itself and its review reports stay
   private.
+- **25 October 2026, 31 rows (project `cot-faithfulness-two-checks`, formerly `not-yet-public-C`):** the study was
+  published on 24 October at https://github.com/clavis-systems/cot-faithfulness-two-checks, with its seven review
+  reports; 8 serious problems among these rows.
 - Released rows keep the `withheld_sha256` that was published while they were withheld, and `text_released` gives the
   date. The Italian columns `what_was_checked_it`, `problem_it`, `evidence_quote` and `note_it` are the hashed text, so
   `python summarise.py` can check that what was released is what had been withheld.
@@ -117,14 +119,14 @@ rows of private correspondence stay withheld.
 ## Checking the rows
 
 - When the register was built, a script checked that every quote is really in its report: 444 of 444.
-- 32 of the 71 reports have a public copy (column `public_copy` in `reports.csv`): 23 are the identical file, and 9 are
-  a copy that is not byte-identical but contains every quoted text. They cover 176 of the 444 rows.
+- 41 of the 71 reports have a public copy (column `public_copy` in `reports.csv`): 28 are the identical file, and 13
+  are a copy that is not byte-identical but contains every quoted text. They cover 212 of the 444 rows.
 - For the other reports, `reports.csv` gives the SHA-256 of the file, so a later release can be checked.
 
 The four examples in my post are rows 53 (the census that counted the wrong thing), 206 (hidden tests that were not
 hidden), 396 and 395 (the published 99.5% and the command that did not work, both in report `R62`). The temperature
-example is row 2, whose text is withheld because that study is not public yet. The unsafe file lock is rows 444 and
-13, also withheld. The 99.5% that was misread again and again appears for example in rows 378, 396 and 412.
+example is row 2 (project `cot-faithfulness-two-checks`). The unsafe file lock is rows 444 (text withheld) and 13.
+The 99.5% that was misread again and again appears for example in rows 378, 396 and 412.
 
 ## Second annotator
 
@@ -153,9 +155,9 @@ kind.
 
 I directed this work and checked the results. An AI agent (Claude) read the reviews and built the register, another
 AI system (Codex) checked it, and Claude drafted this text. AI agents translated the register. The translation was
-checked automatically for numbers, and compared with the Italian by Codex on samples; the 91 rows released on 24
-October were compared in full by a separate Claude agent, because Codex was not available. I decide what is published
-and I answer for it.
+checked automatically for numbers, and compared with the Italian by Codex on samples. The rows released later were
+compared in full: the 91 released on 24 October by a separate Claude agent, because Codex was not available, and the
+31 released on 25 October by a separate Claude agent and by Codex. I decide what is published and I answer for it.
 
 ## Licence
 
